@@ -8,7 +8,7 @@ info:
     Mis à jour le 21 avril 2026 : nouvelles conditions d'admission (B-2) et statistiques fédération (H).
   version: 2.0.0
 servers:
-  - url: https://localhost:8080/
+  - url: http://localhost:8080
     description: Serveur de production
 tags:
   - name: Collectivités
@@ -22,7 +22,6 @@ tags:
   - name: Statistiques
 
 paths:
-  # collectivités
   /collectivites:
     post:
       tags:
@@ -105,7 +104,8 @@ paths:
         '404':
           description: Collectivité non trouvée
 
-  #membres
+  # B - MEMBRES ET ADHÉSION
+
   /membres:
     post:
       tags:
@@ -221,9 +221,8 @@ paths:
         '404':
           description: Membre introuvable
 
-
-#Mandat
-  /mandats:
+   # MANDATS
+   /mandats:
     post:
       tags:
         - Mandats
@@ -304,8 +303,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Mandat'
 
-  # COTISATIONS
-  /cotisations:
+   # C - COTISATIONS
+   /cotisations:
     post:
       tags:
         - Cotisations
@@ -375,8 +374,8 @@ paths:
                     format: float
                     example: 10.0
 
-  # COMPTES ET TRÉSORERIE
-  /comptes/caisse:
+   # D - COMPTES ET TRÉSORERIE
+   /comptes/caisse:
     post:
       tags:
         - Comptes et trésorerie
@@ -481,8 +480,9 @@ paths:
         '404':
           description: Compte introuvable
 
-  # ACTIVITÉS
-  /activites:
+
+  # E - ACTIVITÉS
+   /activites:
     post:
       tags:
         - Activités
@@ -540,7 +540,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Activite'
 
-  # PRÉSENCE ET ASSIDUITÉ
+
+  # F - PRÉSENCE ET ASSIDUITÉ
   /activites/{id_activite}/presences:
     post:
       tags:
@@ -631,7 +632,7 @@ paths:
         '404':
           description: Membre introuvable
 
-  # STATISTIQUES D'UNE COLLECTIVITÉ
+  # G - STATISTIQUES D'UNE COLLECTIVITÉ
   /collectivites/{id_collectivite}/statistiques-mensuelles:
     get:
       tags:
@@ -707,7 +708,6 @@ paths:
         '404':
           description: Collectivité introuvable
 
-  # -----------------------------------------------------------------------
   # H - STATISTIQUES DE LA FÉDÉRATION (nouveau 21/04/2026)
   /federation/statistiques-mensuelles:
     get:
@@ -800,13 +800,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/StatistiqueCollectivitePeriode'
 
-# COMPOSANTS / SCHEMAS
-components:
+ # COMPOSANTS / SCHEMAS
+ components:
   schemas:
 
-
-    # COLLECTIVITÉ
-    CollectiviteResponse:
+     # COLLECTIVITÉ
+     CollectiviteResponse:
       type: object
       properties:
         id_collectivite:
@@ -825,10 +824,8 @@ components:
         autorisation_ouverture:
           type: boolean
 
-    # ------------------------------------------------------------------
-    # MEMBRE
-    # ------------------------------------------------------------------
-    MembreInput:
+     # MEMBRE
+     MembreInput:
       type: object
       required:
         - nom
@@ -885,9 +882,8 @@ components:
               type: string
               enum: [président, président adjoint, trésorier, secrétaire, membre confirmé, membre junior]
 
-
-    # PARRAINAGE
-    ParrainageInput:
+     # PARRAINAGE (B-2 — mis à jour 21/04/2026)
+     ParrainageInput:
       type: object
       required:
         - id_parrain
@@ -912,8 +908,8 @@ components:
             Exemples : famille, amis, collègues, voisins, etc.
           example: "collègues"
 
-    # ADHÉSION
-    AdhesionInput:
+     # ADHÉSION (B-2 — mis à jour 21/04/2026)
+     AdhesionInput:
       type: object
       required:
         - id_collectivite_cible
@@ -942,7 +938,8 @@ components:
             Champ en lecture seule, renvoyé par le serveur pour confirmation.
           example: 200000.0
 
-    # MANDATS
+     # MANDATS
+
     MandatInput:
       type: object
       required:
@@ -989,8 +986,8 @@ components:
               type: integer
               description: Numéro de mandat du membre pour ce poste (max 2).
 
-    # COTISATIONS
-    CotisationInput:
+     # COTISATIONS
+     CotisationInput:
       type: object
       required:
         - id_membre
@@ -1027,8 +1024,8 @@ components:
             id_cotisation:
               type: integer
 
-    # COMPTES
-    CompteBancaireInput:
+     # COMPTES
+     CompteBancaireInput:
       type: object
       required:
         - entite_type
@@ -1092,7 +1089,8 @@ components:
           type: string
           format: date
 
-    # ACTIVITÉS
+     # ACTIVITÉS
+
     ActiviteInput:
       type: object
       required:
@@ -1133,8 +1131,8 @@ components:
             id_activite:
               type: integer
 
-    # PRÉSENCE
-    PresenceInput:
+     # PRÉSENCE
+     PresenceInput:
       type: object
       required:
         - id_membre
@@ -1165,8 +1163,9 @@ components:
             id_presence:
               type: integer
 
+
     # STATISTIQUES COLLECTIVITÉ
-    StatistiqueMembre:
+     StatistiqueMembre:
       type: object
       properties:
         id_membre:
@@ -1174,6 +1173,7 @@ components:
         nom:
           type: string
         prenom:
+          type: string
           type: string
         taux_assiduite:
           type: number
@@ -1188,10 +1188,8 @@ components:
           format: double
           description: Montant estimé des cotisations non réglées sur la période.
 
-    # ------------------------------------------------------------------
-    # STATISTIQUES FÉDÉRATION (nouveau H — 21/04/2026)
-    # ------------------------------------------------------------------
-    StatistiqueCollectivitePeriode:
+     # STATISTIQUES FÉDÉRATION (nouveau H — 21/04/2026)
+     StatistiqueCollectivitePeriode:
       type: object
       description: Statistiques d'une collectivité sur une période donnée.
       properties:
