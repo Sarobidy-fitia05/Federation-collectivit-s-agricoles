@@ -20,7 +20,7 @@ public class Members {
     private String phone;
     private String email;
     private LocalDate membershipDate;
-    private MemberOccupation role;//change the role here to another
+    private MemberOccupation memberOccupation;//change the role here to another
     //collectivity id implemented in the future
 
 }
