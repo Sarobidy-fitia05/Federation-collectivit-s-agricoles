@@ -8,7 +8,7 @@ info:
     Mis à jour le 21 avril 2026 : nouvelles conditions d'admission (B-2) et statistiques fédération (H).
   version: 2.0.0
 servers:
-  - url: https://api.federation-agricole.mg/v1
+  - url: https://localhost:8080/
     description: Serveur de production
 tags:
   - name: Collectivités
