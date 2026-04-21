@@ -21,9 +21,6 @@ tags:
   - name: Statistiques
 
 paths:
-  # ---------------------------------------------------------------------------
-  # A - Ouverture d’une nouvelle collectivité
-  # ---------------------------------------------------------------------------
   /collectivites:
     post:
       tags:
@@ -106,9 +103,6 @@ paths:
         '404':
           description: Collectivité non trouvée
 
-  # ---------------------------------------------------------------------------
-  # B - Admission d’un nouveau membre, changement, démission
-  # ---------------------------------------------------------------------------
   /membres:
     post:
       tags:
@@ -208,9 +202,6 @@ paths:
         '200':
           description: Démission enregistrée (membre n’a plus de collectivité active)
 
-  # ---------------------------------------------------------------------------
-  # C - Cotisation et paiements
-  # ---------------------------------------------------------------------------
   /cotisations:
     post:
       tags:
@@ -274,9 +265,6 @@ paths:
                     type: number
                     format: float
 
-  # ---------------------------------------------------------------------------
-  # D - Situation de trésorerie (comptes)
-  # ---------------------------------------------------------------------------
   /comptes/caisse:
     post:
       tags:
@@ -367,9 +355,6 @@ paths:
                     type: string
                     format: date
 
-  # ---------------------------------------------------------------------------
-  # E - Activités
-  # ---------------------------------------------------------------------------
   /activites:
     post:
       tags:
@@ -419,9 +404,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/Activite'
 
-  # ---------------------------------------------------------------------------
-  # F - Assiduité (présence)
-  # ---------------------------------------------------------------------------
   /activites/{id_activite}/presences:
     post:
       tags:
@@ -501,9 +483,6 @@ paths:
                     type: number
                     format: float
 
-  # ---------------------------------------------------------------------------
-  # G - Statistiques
-  # ---------------------------------------------------------------------------
   /collectivites/{id_collectivite}/statistiques-mensuelles:
     get:
       tags:
@@ -569,9 +548,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/StatistiqueMembre'
 
-# -----------------------------------------------------------------------------
-# Composants (schémas)
-# -----------------------------------------------------------------------------
+
 components:
   schemas:
     CollectiviteResponse:
