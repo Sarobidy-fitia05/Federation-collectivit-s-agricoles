@@ -375,9 +375,7 @@ paths:
                     format: float
                     example: 10.0
 
-  # -----------------------------------------------------------------------
-  # D - COMPTES ET TRÉSORERIE
-  # -----------------------------------------------------------------------
+  # COMPTES ET TRÉSORERIE
   /comptes/caisse:
     post:
       tags:
@@ -483,9 +481,7 @@ paths:
         '404':
           description: Compte introuvable
 
-  # -----------------------------------------------------------------------
-  # E - ACTIVITÉS
-  # -----------------------------------------------------------------------
+  # ACTIVITÉS
   /activites:
     post:
       tags:
@@ -544,9 +540,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Activite'
 
-  # -----------------------------------------------------------------------
-  # F - PRÉSENCE ET ASSIDUITÉ
-  # -----------------------------------------------------------------------
+  # PRÉSENCE ET ASSIDUITÉ
   /activites/{id_activite}/presences:
     post:
       tags:
@@ -637,9 +631,7 @@ paths:
         '404':
           description: Membre introuvable
 
-  # -----------------------------------------------------------------------
-  # G - STATISTIQUES D'UNE COLLECTIVITÉ
-  # -----------------------------------------------------------------------
+  # STATISTIQUES D'UNE COLLECTIVITÉ
   /collectivites/{id_collectivite}/statistiques-mensuelles:
     get:
       tags:
@@ -717,7 +709,6 @@ paths:
 
   # -----------------------------------------------------------------------
   # H - STATISTIQUES DE LA FÉDÉRATION (nouveau 21/04/2026)
-  # -----------------------------------------------------------------------
   /federation/statistiques-mensuelles:
     get:
       tags:
