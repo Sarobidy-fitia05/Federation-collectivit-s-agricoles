@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Members {
+public class Member {
     private Long id;
     private String lastName;
     private String firstName;
@@ -20,7 +20,7 @@ public class Members {
     private String phone;
     private String email;
     private LocalDate membershipDate;
-    private MemberOccupation role;//change the role here to another
+    private MemberOccupation memberOccupation;
     //collectivity id implemented in the future
 
 }
