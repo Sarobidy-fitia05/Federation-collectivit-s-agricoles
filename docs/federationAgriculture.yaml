@@ -800,15 +800,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/StatistiqueCollectivitePeriode'
 
-# ==========================================================================
 # COMPOSANTS / SCHEMAS
-# ==========================================================================
 components:
   schemas:
 
-    # ------------------------------------------------------------------
+
     # COLLECTIVITÉ
-    # ------------------------------------------------------------------
     CollectiviteResponse:
       type: object
       properties:
@@ -888,9 +885,8 @@ components:
               type: string
               enum: [président, président adjoint, trésorier, secrétaire, membre confirmé, membre junior]
 
-    # ------------------------------------------------------------------
-    # PARRAINAGE (B-2 — mis à jour 21/04/2026)
-    # ------------------------------------------------------------------
+
+    # PARRAINAGE
     ParrainageInput:
       type: object
       required:
@@ -916,9 +912,7 @@ components:
             Exemples : famille, amis, collègues, voisins, etc.
           example: "collègues"
 
-    # ------------------------------------------------------------------
-    # ADHÉSION (B-2 — mis à jour 21/04/2026)
-    # ------------------------------------------------------------------
+    # ADHÉSION
     AdhesionInput:
       type: object
       required:
@@ -948,9 +942,7 @@ components:
             Champ en lecture seule, renvoyé par le serveur pour confirmation.
           example: 200000.0
 
-    # ------------------------------------------------------------------
     # MANDATS
-    # ------------------------------------------------------------------
     MandatInput:
       type: object
       required:
@@ -997,9 +989,7 @@ components:
               type: integer
               description: Numéro de mandat du membre pour ce poste (max 2).
 
-    # ------------------------------------------------------------------
     # COTISATIONS
-    # ------------------------------------------------------------------
     CotisationInput:
       type: object
       required:
@@ -1037,9 +1027,7 @@ components:
             id_cotisation:
               type: integer
 
-    # ------------------------------------------------------------------
     # COMPTES
-    # ------------------------------------------------------------------
     CompteBancaireInput:
       type: object
       required:
@@ -1104,9 +1092,7 @@ components:
           type: string
           format: date
 
-    # ------------------------------------------------------------------
     # ACTIVITÉS
-    # ------------------------------------------------------------------
     ActiviteInput:
       type: object
       required:
@@ -1147,9 +1133,7 @@ components:
             id_activite:
               type: integer
 
-    # ------------------------------------------------------------------
     # PRÉSENCE
-    # ------------------------------------------------------------------
     PresenceInput:
       type: object
       required:
@@ -1181,9 +1165,7 @@ components:
             id_presence:
               type: integer
 
-    # ------------------------------------------------------------------
     # STATISTIQUES COLLECTIVITÉ
-    # ------------------------------------------------------------------
     StatistiqueMembre:
       type: object
       properties:
