@@ -6,8 +6,7 @@ import java.util.List;
 
 @Data
 public class CreateMemberRequest {
-    // MemberInformation
-    private String firstName;
+     private String firstName;
     private String lastName;
     private LocalDate birthDate;
     private Gender gender;
@@ -17,8 +16,7 @@ public class CreateMemberRequest {
     private String email;
     private MemberOccupation occupation;
 
-    // CreateMember specific
-    private String collectivityIdentifier;
+     private String collectivityIdentifier;
     private List<String> referees;
     private Boolean registrationFeePaid;
     private Boolean membershipDuesPaid;
