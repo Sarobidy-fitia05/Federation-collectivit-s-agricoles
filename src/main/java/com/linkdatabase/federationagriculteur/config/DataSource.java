@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Configuration
-public class DatabaseConfig {
+public class DataSource {
     private final String jdbcURL = System.getenv("JDBC_URL");
     private final String user = System.getenv("federation");
     private final String password = "123456";
