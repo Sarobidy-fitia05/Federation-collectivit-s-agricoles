@@ -63,7 +63,7 @@ public class MemberRepository {
     }
 
     public void insertRefereeLinks(String memberId, List<String> refereeIds) {
-        String sql = "INSERT INTO member_referee (member_id, referee_id) VALUES (?, ?)";
+        String sql = "INSERT INTO member_referee (member_id, referee_id) VALUES (?::uuid, ?::uuid)";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -81,7 +81,12 @@ public class MemberRepository {
     }
 
     public Member findById(String id) {
-        String sql = "SELECT * FROM member WHERE id = ?";
+        String sql = """
+                SELECT id, first_name, last_name, birth_date, gender, address,
+                       profession, phone_number, email, occupation
+                FROM member
+                WHERE id = ?::uuid
+                """;
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -105,8 +110,12 @@ public class MemberRepository {
             return Collections.emptyList();
         }
 
-        String placeholders = String.join(", ", Collections.nCopies(ids.size(), "?"));
-        String sql = "SELECT * FROM member WHERE id IN (" + placeholders + ")";
+        String placeholders = String.join(", ", Collections.nCopies(ids.size(), "?::uuid"));
+        String sql = """
+                SELECT id, first_name, last_name, birth_date, gender, address,
+                       profession, phone_number, email, occupation
+                FROM member
+                WHERE id IN (""" + placeholders + ")";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
