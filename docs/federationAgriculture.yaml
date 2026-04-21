@@ -22,6 +22,7 @@ tags:
   - name: Statistiques
 
 paths:
+  # collectivités
   /collectivites:
     post:
       tags:
@@ -103,6 +104,8 @@ paths:
           description: Autorisation mise à jour
         '404':
           description: Collectivité non trouvée
+
+  #membres
   /membres:
     post:
       tags:
@@ -218,9 +221,8 @@ paths:
         '404':
           description: Membre introuvable
 
-  # -----------------------------------------------------------------------
-  # MANDATS
-  # -----------------------------------------------------------------------
+
+#Mandat
   /mandats:
     post:
       tags:
@@ -302,9 +304,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Mandat'
 
-  # -----------------------------------------------------------------------
-  # C - COTISATIONS
-  # -----------------------------------------------------------------------
+  # COTISATIONS
   /cotisations:
     post:
       tags:
