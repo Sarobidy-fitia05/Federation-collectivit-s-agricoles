@@ -103,11 +103,6 @@ paths:
           description: Autorisation mise à jour
         '404':
           description: Collectivité non trouvée
-
-  # -----------------------------------------------------------------------
-  # B - MEMBRES ET ADHÉSION
-  # Mis à jour le 21/04/2026 : nouvelles conditions d'admission (B-2)
-  # -----------------------------------------------------------------------
   /membres:
     post:
       tags:
