@@ -1174,6 +1174,7 @@ paths:
           type: string
         prenom:
           type: string
+          type: string
         taux_assiduite:
           type: number
           format: float
