@@ -1,6 +1,6 @@
 package com.linkdatabase.federationagriculteur.entity;
 
-public enum Role {
+public enum MemberOccupation {
     PRESIDENT,
     VICE_PRESIDENT,
     TREASURER,

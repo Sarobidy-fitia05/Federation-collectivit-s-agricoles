@@ -20,7 +20,8 @@ public class Members {
     private String phone;
     private String email;
     private LocalDate membershipDate;
-    private Role role;//solona ito Role ito fa ts izy io
-    //tsy ampuy collectivity id
+    private MemberOccupation role;//change the role here to another
+    //collectivity id implemented in the future
 
 }
+//original members
