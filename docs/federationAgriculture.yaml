@@ -22,7 +22,6 @@ tags:
   - name: Statistiques
 
 paths:
-  # collectivités
   /collectivites:
     post:
       tags:
@@ -105,7 +104,10 @@ paths:
         '404':
           description: Collectivité non trouvée
 
-  #membres
+  # -----------------------------------------------------------------------
+  # B - MEMBRES ET ADHÉSION
+  # Mis à jour le 21/04/2026 : nouvelles conditions d'admission (B-2)
+  # -----------------------------------------------------------------------
   /membres:
     post:
       tags:
@@ -221,8 +223,9 @@ paths:
         '404':
           description: Membre introuvable
 
-
-#Mandat
+  # -----------------------------------------------------------------------
+  # MANDATS
+  # -----------------------------------------------------------------------
   /mandats:
     post:
       tags:
@@ -304,7 +307,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Mandat'
 
-  # COTISATIONS
+  # -----------------------------------------------------------------------
+  # C - COTISATIONS
+  # -----------------------------------------------------------------------
   /cotisations:
     post:
       tags:
@@ -375,7 +380,9 @@ paths:
                     format: float
                     example: 10.0
 
-  # COMPTES ET TRÉSORERIE
+  # -----------------------------------------------------------------------
+  # D - COMPTES ET TRÉSORERIE
+  # -----------------------------------------------------------------------
   /comptes/caisse:
     post:
       tags:
@@ -481,7 +488,9 @@ paths:
         '404':
           description: Compte introuvable
 
-  # ACTIVITÉS
+  # -----------------------------------------------------------------------
+  # E - ACTIVITÉS
+  # -----------------------------------------------------------------------
   /activites:
     post:
       tags:
@@ -540,7 +549,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Activite'
 
-  # PRÉSENCE ET ASSIDUITÉ
+  # -----------------------------------------------------------------------
+  # F - PRÉSENCE ET ASSIDUITÉ
+  # -----------------------------------------------------------------------
   /activites/{id_activite}/presences:
     post:
       tags:
@@ -631,7 +642,9 @@ paths:
         '404':
           description: Membre introuvable
 
-  # STATISTIQUES D'UNE COLLECTIVITÉ
+  # -----------------------------------------------------------------------
+  # G - STATISTIQUES D'UNE COLLECTIVITÉ
+  # -----------------------------------------------------------------------
   /collectivites/{id_collectivite}/statistiques-mensuelles:
     get:
       tags:
@@ -709,6 +722,7 @@ paths:
 
   # -----------------------------------------------------------------------
   # H - STATISTIQUES DE LA FÉDÉRATION (nouveau 21/04/2026)
+  # -----------------------------------------------------------------------
   /federation/statistiques-mensuelles:
     get:
       tags:
@@ -800,12 +814,15 @@ paths:
                 items:
                   $ref: '#/components/schemas/StatistiqueCollectivitePeriode'
 
+# ==========================================================================
 # COMPOSANTS / SCHEMAS
+# ==========================================================================
 components:
   schemas:
 
-
+    # ------------------------------------------------------------------
     # COLLECTIVITÉ
+    # ------------------------------------------------------------------
     CollectiviteResponse:
       type: object
       properties:
@@ -885,8 +902,9 @@ components:
               type: string
               enum: [président, président adjoint, trésorier, secrétaire, membre confirmé, membre junior]
 
-
-    # PARRAINAGE
+    # ------------------------------------------------------------------
+    # PARRAINAGE (B-2 — mis à jour 21/04/2026)
+    # ------------------------------------------------------------------
     ParrainageInput:
       type: object
       required:
@@ -912,7 +930,9 @@ components:
             Exemples : famille, amis, collègues, voisins, etc.
           example: "collègues"
 
-    # ADHÉSION
+    # ------------------------------------------------------------------
+    # ADHÉSION (B-2 — mis à jour 21/04/2026)
+    # ------------------------------------------------------------------
     AdhesionInput:
       type: object
       required:
@@ -942,7 +962,9 @@ components:
             Champ en lecture seule, renvoyé par le serveur pour confirmation.
           example: 200000.0
 
+    # ------------------------------------------------------------------
     # MANDATS
+    # ------------------------------------------------------------------
     MandatInput:
       type: object
       required:
@@ -989,7 +1011,9 @@ components:
               type: integer
               description: Numéro de mandat du membre pour ce poste (max 2).
 
+    # ------------------------------------------------------------------
     # COTISATIONS
+    # ------------------------------------------------------------------
     CotisationInput:
       type: object
       required:
@@ -1027,7 +1051,9 @@ components:
             id_cotisation:
               type: integer
 
+    # ------------------------------------------------------------------
     # COMPTES
+    # ------------------------------------------------------------------
     CompteBancaireInput:
       type: object
       required:
@@ -1092,7 +1118,9 @@ components:
           type: string
           format: date
 
+    # ------------------------------------------------------------------
     # ACTIVITÉS
+    # ------------------------------------------------------------------
     ActiviteInput:
       type: object
       required:
@@ -1133,7 +1161,9 @@ components:
             id_activite:
               type: integer
 
+    # ------------------------------------------------------------------
     # PRÉSENCE
+    # ------------------------------------------------------------------
     PresenceInput:
       type: object
       required:
@@ -1165,7 +1195,9 @@ components:
             id_presence:
               type: integer
 
+    # ------------------------------------------------------------------
     # STATISTIQUES COLLECTIVITÉ
+    # ------------------------------------------------------------------
     StatistiqueMembre:
       type: object
       properties:
