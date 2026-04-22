@@ -6,9 +6,12 @@ import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 import com.linkdatabase.federationagriculteur.service.CollectivityService;
+import com.linkdatabase.federationagriculteur.service.MembershipFeeService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -45,13 +48,17 @@ public class CollectivityController {
         return ResponseEntity.ok(fees);
     }
 
-    @PostMapping()
-    public ResponseEntity<List<MembershipFee>> createMembershipFees(@PathVariable String id, @RequestBody List<CreateMembershipFee> requests)
-    {
-        @PathVariable String id,
-        @RequestBody List<CreateMembershipFee> requests) {
-        List<MembershipFee> created = membershipFeeService.createMembershipFees(id, requests);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
-    }
+    @PostMapping("/{id}/membershipFees")
+    public ResponseEntity<List<MembershipFee>> createMembershipFees(
+            @PathVariable String id,
+            @RequestBody List<CreateMembershipFee> requests) {
+        try {
+            List<MembershipFee> created = membershipFeeService.createMembershipFees(id, requests);
+            return new ResponseEntity<>(created, HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException | ValidationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }
