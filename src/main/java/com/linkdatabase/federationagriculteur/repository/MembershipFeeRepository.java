@@ -4,14 +4,15 @@ import com.linkdatabase.federationagriculteur.entity.ActivityStatus;
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.entity.Frequency;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+@Repository
 public class MembershipFeeRepository {
     private final DataSource dataSource;
 
@@ -24,14 +25,14 @@ public class MembershipFeeRepository {
         String sql = """
                 SELECT id, eligible_from, frequency, amount, label, status
                 FROM membership_fee
-                WHERE collectivity_id = ?::uuid
+                WHERE collectivity_id = ?
                 ORDER BY eligible_from
                 """;
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, UUID.fromString(collectivityId));
+            stmt.setString(1, collectivityId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -48,17 +49,15 @@ public class MembershipFeeRepository {
         String sql = """
                 INSERT INTO membership_fee
                 (id, collectivity_id, eligible_from, frequency, amount, label, status)
-                VALUES (?::uuid, ?::uuid, ?, ?::fee_frequency, ?, ?, ?::activity_status)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 RETURNING id, eligible_from, frequency, amount, label, status
                 """;
-
-        UUID newId = UUID.randomUUID();
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, newId);
-            stmt.setObject(2, UUID.fromString(collectivityId));
+            stmt.setString(1, fee.getId());
+            stmt.setString(2, collectivityId);
             stmt.setDate(3, Date.valueOf(fee.getEligibleFrom()));
             stmt.setString(4, fee.getFrequency().name());
             stmt.setBigDecimal(5, fee.getAmount());
@@ -77,14 +76,13 @@ public class MembershipFeeRepository {
         }
     }
 
-    public Optional<Collectivity> findById(String id) {
-
-        String sql = "SELECT id, name FROM collectivity WHERE id = ?::uuid";
+    public Optional<Collectivity> findCollectivityById(String id) {
+        String sql = "SELECT id, name FROM collectivity WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, UUID.fromString(id));
+            stmt.setString(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -101,13 +99,14 @@ public class MembershipFeeRepository {
 
         return Optional.empty();
     }
+
     public boolean existsByCollectivityIdAndLabel(String collectivityId, String label) {
-        String sql = "SELECT 1 FROM membership_fee WHERE collectivity_id = ?::uuid AND label = ?";
+        String sql = "SELECT 1 FROM membership_fee WHERE collectivity_id = ? AND label = ?";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, UUID.fromString(collectivityId));
+            stmt.setString(1, collectivityId);
             stmt.setString(2, label);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -130,5 +129,4 @@ public class MembershipFeeRepository {
 
         return fee;
     }
-
 }
