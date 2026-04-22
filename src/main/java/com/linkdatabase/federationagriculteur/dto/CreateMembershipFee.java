@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 @Data
 public class CreateMembershipFee {
+    private String id;
     private LocalDate eligibleFrom;
     private Frequency frequency;
     private BigDecimal amount;
