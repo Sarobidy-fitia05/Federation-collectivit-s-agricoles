@@ -1,5 +1,6 @@
 package com.linkdatabase.federationagriculteur.repository;
 
+
 import com.linkdatabase.federationagriculteur.entity.ActivityStatus;
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.entity.Frequency;
