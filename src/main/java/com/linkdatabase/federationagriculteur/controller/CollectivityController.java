@@ -20,8 +20,7 @@ public class CollectivityController {
     }
 
     @PostMapping
-    public ResponseEntity<List<Collectivity>> createCollectivities(
-            @RequestBody List<CreateCollectivityRequest> requests) {
+    public ResponseEntity<List<Collectivity>> createCollectivities(@RequestBody List<CreateCollectivityRequest> requests) {
         List<Collectivity> collectivities = collectivityService.createCollectivities(requests);
         return new ResponseEntity<>(collectivities, HttpStatus.CREATED);
     }

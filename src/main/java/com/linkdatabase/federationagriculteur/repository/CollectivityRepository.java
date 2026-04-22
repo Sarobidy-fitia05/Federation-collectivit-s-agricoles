@@ -24,15 +24,16 @@ public class CollectivityRepository {
     public Collectivity insertCollectivity(Collectivity collectivity) {
         String sql = """
                 INSERT INTO collectivity
-                    (location, federation_approval)
-                VALUES (?, ?)
+                    (name, location, federation_approval)
+                VALUES (?, ?, ?)
                 """;
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setString(1, collectivity.getLocation());
-            statement.setBoolean(2, true); // federationApproval est validé dans le service
+            statement.setString(1, collectivity.getName());
+            statement.setString(2, collectivity.getLocation());
+            statement.setBoolean(3, true);
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
@@ -96,7 +97,7 @@ public class CollectivityRepository {
 
     public Collectivity findById(String id) {
         String sql = """
-                SELECT id, location
+                SELECT id, name, location
                 FROM collectivity
                 WHERE id = ?::uuid
                 """;
@@ -109,6 +110,7 @@ public class CollectivityRepository {
                 if (rs.next()) {
                     Collectivity c = new Collectivity();
                     c.setId(rs.getString("id"));
+                    c.setName(rs.getString("name"));
                     c.setLocation(rs.getString("location"));
 
                     c.setMembers(findMembersByCollectivityId(id));

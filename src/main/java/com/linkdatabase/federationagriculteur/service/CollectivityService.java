@@ -28,6 +28,7 @@ public class CollectivityService {
             validateAllMembersExist(request);
 
             Collectivity collectivity = new Collectivity();
+            collectivity.setName(request.getName());          // ← nom donné par la fédération
             collectivity.setLocation(request.getLocation());
 
             Collectivity saved = collectivityRepository.insertCollectivity(collectivity);
@@ -49,6 +50,9 @@ public class CollectivityService {
     }
 
     private void validateBusinessRules(CreateCollectivityRequest request) {
+         if (request.getName() == null || request.getName().isBlank()) {
+            throw new IllegalArgumentException("Collectivity name must be provided by the federation.");
+        }
         if (!Boolean.TRUE.equals(request.getFederationApproval())) {
             throw new IllegalArgumentException("Federation approval must be true.");
         }

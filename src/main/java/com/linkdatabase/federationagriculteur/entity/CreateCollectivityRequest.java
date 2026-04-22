@@ -5,6 +5,7 @@ import java.util.List;
 
 @Data
 public class CreateCollectivityRequest {
+    private String name;
     private String location;
     private List<String> members;
     private Boolean federationApproval;
