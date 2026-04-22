@@ -13,7 +13,7 @@ public class MemberPaymentService {
         this.memberPaymentRepository = memberPaymentRepository;
     }
 
-    public MemberPayment createPayment(CreateMemberPayment request) {
+    public MemberPayment createPayment(CreateMemberPayment request, String memberId) {
         if (request.getId() == null || request.getId().isBlank()) {
             throw new IllegalArgumentException("Payment id is required");
         }
@@ -30,6 +30,7 @@ public class MemberPaymentService {
         payment.setMembershipFeeId(request.getMembershipFeeIdentifier());
         payment.setFinancialAccountId(request.getAccountCreditedIdentifier());
         payment.setPaymentMode(request.getPaymentMode());
+        payment.setMemberId(memberId);
 
         return memberPaymentRepository.insert(payment);
     }
