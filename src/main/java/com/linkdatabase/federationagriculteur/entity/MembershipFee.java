@@ -1,7 +1,10 @@
 package com.linkdatabase.federationagriculteur.entity;
 
-import java.time.LocalDate;
+import lombok.NoArgsConstructor;
+ import java.time.LocalDate;
+
 @data
+@NoArgsConstructor
 public class MembershipFee {
     private String id;
     private LocalDate elligibleFrom;
