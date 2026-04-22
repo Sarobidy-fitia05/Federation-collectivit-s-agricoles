@@ -37,7 +37,7 @@ paths:
         404:
           description: Member not found.
 
-  '/collectivities/{collectivityId}':
+  '/collectivities/{Id}':
     patch:
       summary: Assign unique number and name to a collectivity
       description: |
@@ -46,7 +46,7 @@ paths:
         and must be unique across all collectivities. Once assigned, they become 
         immutable. This corresponds to Feature J of the specification.
       parameters:
-        - name: collectivityId
+        - name: Id
           in: path
           required: true
           description: The internal UUID of the collectivity.

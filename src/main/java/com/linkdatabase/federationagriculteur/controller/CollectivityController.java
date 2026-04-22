@@ -27,13 +27,16 @@ public class CollectivityController {
         return new ResponseEntity<>(collectivities, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{collectivityId}")
-    public ResponseEntity<Collectivity> assignNumberAndName(
-            @PathVariable String collectivityId,
+    @PutMapping("/{id}")
+    public ResponseEntity<Collectivity> updateCollectivityInformation(
+            @PathVariable String id,
             @RequestBody NumberAndNameRequest request) {
-        Collectivity updated = collectivityService.assignNumberAndName(collectivityId, request);
+
+        Collectivity updated = collectivityService
+                .assignNumberAndName(id, request.getNumber(), request.getName());
+
         return ResponseEntity.ok(updated);
+
+
+
     }
-
-
-}
