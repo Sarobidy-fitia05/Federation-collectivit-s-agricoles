@@ -1,7 +1,7 @@
 package com.linkdatabase.federationagriculteur.controller;
 
-import com.linkdatabase.federationagriculteur.dto.AttributionRequest;
-import com.linkdatabase.federationagriculteur.entity.Collectivity;
+ import com.linkdatabase.federationagriculteur.dto.NumberAndNameRequest;
+ import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 import com.linkdatabase.federationagriculteur.service.CollectivityService;
 import org.springframework.http.HttpStatus;
@@ -25,6 +25,14 @@ public class CollectivityController {
             @RequestBody List<CreateCollectivityRequest> requests) {
         List<Collectivity> collectivities = collectivityService.createCollectivities(requests);
         return new ResponseEntity<>(collectivities, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{collectivityId}")
+    public ResponseEntity<Collectivity> assignNumberAndName(
+            @PathVariable String collectivityId,
+            @RequestBody NumberAndNameRequest request) {
+        Collectivity updated = collectivityService.assignNumberAndName(collectivityId, request);
+        return ResponseEntity.ok(updated);
     }
 
 

@@ -1,7 +1,9 @@
 package com.linkdatabase.federationagriculteur.service;
 
 import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
+import com.linkdatabase.federationagriculteur.dto.NumberAndNameRequest;
 import com.linkdatabase.federationagriculteur.entity.*;
+import com.linkdatabase.federationagriculteur.exception.ConflictException;
 import com.linkdatabase.federationagriculteur.repository.CollectivityRepository;
 import com.linkdatabase.federationagriculteur.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -42,11 +44,48 @@ public class CollectivityService {
                     request.getStructure().getSecretary()
             );
 
-            Collectivity fullCollectivity = collectivityRepository.findById(saved.getId());
-            created.add(fullCollectivity);
+            created.add(collectivityRepository.findById(saved.getId()));
         }
 
         return created;
+    }
+
+    public Collectivity assignNumberAndName(String collectivityId, NumberAndNameRequest request) {
+        validateNumberAndNameRequest(request);
+
+        Collectivity existing = collectivityRepository.findById(collectivityId);
+        if (existing == null) {
+            throw new RuntimeException("Collectivity not found with id: " + collectivityId);
+        }
+
+        if (existing.getNumber() != null || existing.getName() != null) {
+            throw new IllegalArgumentException(
+                    "Collectivity already has a number or name assigned. It cannot be modified."
+            );
+        }
+
+        if (collectivityRepository.existsByNumber(request.getNumber())) {
+            throw new ConflictException("Number already in use: " + request.getNumber());
+        }
+
+        if (collectivityRepository.existsByName(request.getName())) {
+            throw new ConflictException("Name already in use: " + request.getName());
+        }
+
+        return collectivityRepository.updateNumberAndName(
+                collectivityId,
+                request.getNumber(),
+                request.getName()
+        );
+    }
+
+    private void validateNumberAndNameRequest(NumberAndNameRequest request) {
+        if (request.getNumber() == null || request.getNumber().isBlank()) {
+            throw new IllegalArgumentException("Number is required and must not be empty.");
+        }
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new IllegalArgumentException("Name is required and must not be empty.");
+        }
     }
 
     private void validateBusinessRules(CreateCollectivityRequest request) {
@@ -65,8 +104,7 @@ public class CollectivityService {
     }
 
     private void validateAllMembersExist(CreateCollectivityRequest request) {
-        List<String> allMemberIds = new ArrayList<>();
-        allMemberIds.addAll(request.getMembers());
+        List<String> allMemberIds = new ArrayList<>(request.getMembers());
         allMemberIds.add(request.getStructure().getPresident());
         allMemberIds.add(request.getStructure().getVicePresident());
         allMemberIds.add(request.getStructure().getTreasurer());
@@ -81,30 +119,5 @@ public class CollectivityService {
                     .toList();
             throw new RuntimeException("Some members not found: " + missing);
         }
-    }
-
-    public Collectivity attributeNumberAndName(String id, String number, String name) {
-        Collectivity collectivity = collectivityRepository.findById(id);
-        if (collectivity == null) {
-            throw new RuntimeException("Collectivity not found with id: " + id);
-        }
-
-        if (collectivity.getNumber() != null && !collectivity.getNumber().equals(number)) {
-            throw new RuntimeException("Number cannot be changed once attributed");
-        }
-        if (collectivity.getName() != null && !collectivity.getName().equals(name)) {
-            throw new RuntimeException("Name cannot be changed once attributed");
-        }
-
-        if (collectivityRepository.existsByName(name)) {
-            throw new RuntimeException("Name already exists");
-        }
-        if (collectivityRepository.existsByNumber(number)) {
-            throw new RuntimeException("Number already exists");
-        }
-
-        collectivity.setNumber(number);
-        collectivity.setName(name);
-        return collectivityRepository.save(collectivity);
     }
 }
