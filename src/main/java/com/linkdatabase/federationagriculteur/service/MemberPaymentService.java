@@ -4,7 +4,9 @@ import com.linkdatabase.federationagriculteur.dto.CreateMemberPayment;
 import com.linkdatabase.federationagriculteur.entity.MemberPayment;
 import com.linkdatabase.federationagriculteur.exception.ConflictException;
 import com.linkdatabase.federationagriculteur.repository.MemberPaymentRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MemberPaymentService {
 
     private final MemberPaymentRepository memberPaymentRepository;
