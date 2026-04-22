@@ -21,11 +21,15 @@ public class MemberService {
         List<Member> created = new ArrayList<>();
 
         for (CreateMemberRequest request : requests) {
+             if (request.getId() == null || request.getId().isBlank()) {
+                throw new IllegalArgumentException("Member id is required");
+            }
             validateBusinessRules(request);
 
             List<Member> resolvedReferees = resolveReferees(request.getReferees());
 
             Member member = buildMemberFromRequest(request);
+            member.setId(request.getId());
             Member savedMember = memberRepository.insertMember(member);
 
             memberRepository.insertRefereeLinks(savedMember.getId(), request.getReferees());
