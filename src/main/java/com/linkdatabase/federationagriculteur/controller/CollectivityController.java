@@ -19,8 +19,8 @@ import java.util.List;
 @RequestMapping("/collectivities")
 public class CollectivityController {
 
-    private final CollectivityService collectivityService;
-
+    private  CollectivityService collectivityService;
+    private  MembershipFeeService membershipFeeService;
     public CollectivityController(CollectivityService collectivityService) {
         this.collectivityService = collectivityService;
     }
@@ -52,13 +52,19 @@ public class CollectivityController {
     public ResponseEntity<List<MembershipFee>> createMembershipFees(
             @PathVariable String id,
             @RequestBody List<CreateMembershipFee> requests) {
+
         try {
             List<MembershipFee> created = membershipFeeService.createMembershipFees(id, requests);
             return new ResponseEntity<>(created, HttpStatus.CREATED);
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (IllegalArgumentException | ValidationException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (RuntimeException e) {
+             String msg = e.getMessage().toLowerCase();
+            if (msg.contains("not found")) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            } else if (msg.contains("already exists") || msg.contains("required") || msg.contains("must be")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            } else {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
+            }
         }
     }
 }
