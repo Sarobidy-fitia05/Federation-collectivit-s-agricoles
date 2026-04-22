@@ -24,38 +24,28 @@ public class MemberRepository {
     public Member insertMember(Member member) {
         String sql = """
                 INSERT INTO member
-                    (first_name, last_name, birth_date, gender, address,
+                    (id, first_name, last_name, birth_date, gender, address,
                      profession, phone_number, email, occupation, membership_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, member.getFirstName());
-            statement.setString(2, member.getLastName());
-            statement.setDate(3, member.getBirthDate() != null ? Date.valueOf(member.getBirthDate()) : null);
-            statement.setString(4, member.getGender() != null ? member.getGender().name() : null);
-            statement.setString(5, member.getAddress());
-            statement.setString(6, member.getProfession());
-            statement.setObject(7, member.getPhoneNumber());
-            statement.setString(8, member.getEmail());
-            statement.setString(9, member.getOccupation() != null ? member.getOccupation().name() : null);
-            statement.setDate(10, Date.valueOf(LocalDate.now()));
+            statement.setString(1, member.getId());
+            statement.setString(2, member.getFirstName());
+            statement.setString(3, member.getLastName());
+            statement.setDate(4, member.getBirthDate() != null ? Date.valueOf(member.getBirthDate()) : null);
+            statement.setString(5, member.getGender() != null ? member.getGender().name() : null);
+            statement.setString(6, member.getAddress());
+            statement.setString(7, member.getProfession());
+            statement.setObject(8, member.getPhoneNumber());
+            statement.setString(9, member.getEmail());
+            statement.setString(10, member.getOccupation() != null ? member.getOccupation().name() : null);
+            statement.setDate(11, Date.valueOf(LocalDate.now()));
 
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("Member insertion failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    member.setId(generatedKeys.getString(1));
-                    return member;
-                } else {
-                    throw new RuntimeException("Member insertion failed, no ID generated.");
-                }
-            }
+            statement.executeUpdate();
+            return member;
 
         } catch (SQLException e) {
             throw new RuntimeException("Error inserting member: " + e.getMessage(), e);
@@ -63,7 +53,7 @@ public class MemberRepository {
     }
 
     public void insertRefereeLinks(String memberId, List<String> refereeIds) {
-        String sql = "INSERT INTO member_referee (member_id, referee_id) VALUES (?::uuid, ?::uuid)";
+        String sql = "INSERT INTO member_referee (member_id, referee_id) VALUES (?, ?)";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -85,7 +75,7 @@ public class MemberRepository {
                 SELECT id, first_name, last_name, birth_date, gender, address,
                        profession, phone_number, email, occupation
                 FROM member
-                WHERE id = ?::uuid
+                WHERE id = ?
                 """;
 
         try (Connection connection = dataSource.getConnection();
@@ -110,7 +100,7 @@ public class MemberRepository {
             return Collections.emptyList();
         }
 
-        String placeholders = String.join(", ", Collections.nCopies(ids.size(), "?::uuid"));
+        String placeholders = String.join(", ", Collections.nCopies(ids.size(), "?"));
         String sql = """
                 SELECT id, first_name, last_name, birth_date, gender, address,
                        profession, phone_number, email, occupation
