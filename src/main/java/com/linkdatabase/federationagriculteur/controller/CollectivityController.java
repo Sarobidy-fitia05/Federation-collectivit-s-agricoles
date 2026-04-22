@@ -3,6 +3,7 @@ package com.linkdatabase.federationagriculteur.controller;
 import com.linkdatabase.federationagriculteur.dto.NumberAndNameRequest;
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
+import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 import com.linkdatabase.federationagriculteur.service.CollectivityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +37,11 @@ public class CollectivityController {
 
         return ResponseEntity.ok(updated);
     }
+
+    @GetMapping("/{id}/membershipFees")
+    public ResponseEntity<List<MembershipFee>> getMembershipFees(@PathVariable String id) {
+        List<MembershipFee> fees = membershipFeeService.getMembershipFees(id);
+        return ResponseEntity.ok(fees);
+    }
+
 }
