@@ -1,4 +1,4 @@
-package com.linkdatabase.federationagriculteur.entity;
+package com.linkdatabase.federationagriculteur.dto;
 
 import lombok.Data;
 import java.util.List;

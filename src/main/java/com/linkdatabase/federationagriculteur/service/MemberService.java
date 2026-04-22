@@ -1,6 +1,6 @@
 package com.linkdatabase.federationagriculteur.service;
 
-import com.linkdatabase.federationagriculteur.entity.CreateMemberRequest;
+import com.linkdatabase.federationagriculteur.dto.CreateMemberRequest;
 import com.linkdatabase.federationagriculteur.entity.Member;
 import com.linkdatabase.federationagriculteur.repository.MemberRepository;
 import org.springframework.stereotype.Service;

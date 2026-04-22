@@ -1,7 +1,8 @@
 package com.linkdatabase.federationagriculteur.controller;
 
+import com.linkdatabase.federationagriculteur.dto.AttributionRequest;
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
-import com.linkdatabase.federationagriculteur.entity.CreateCollectivityRequest;
+import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 import com.linkdatabase.federationagriculteur.service.CollectivityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +26,6 @@ public class CollectivityController {
         List<Collectivity> collectivities = collectivityService.createCollectivities(requests);
         return new ResponseEntity<>(collectivities, HttpStatus.CREATED);
     }
+
+
 }

@@ -32,7 +32,7 @@ public class CollectivityRepository {
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, collectivity.getLocation());
-            statement.setBoolean(2, true); // federationApproval est validé dans le service
+            statement.setBoolean(2, true);
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
@@ -96,7 +96,7 @@ public class CollectivityRepository {
 
     public Collectivity findById(String id) {
         String sql = """
-                SELECT id, location
+                SELECT id, location, number, name
                 FROM collectivity
                 WHERE id = ?::uuid
                 """;
@@ -110,6 +110,8 @@ public class CollectivityRepository {
                     Collectivity c = new Collectivity();
                     c.setId(rs.getString("id"));
                     c.setLocation(rs.getString("location"));
+                    c.setNumber(rs.getString("number"));
+                    c.setName(rs.getString("name"));
 
                     c.setMembers(findMembersByCollectivityId(id));
                     c.setStructure(findStructureByCollectivityId(id));
@@ -121,6 +123,104 @@ public class CollectivityRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Error finding collectivity by id: " + e.getMessage(), e);
         }
+    }
+
+    public Collectivity findByNumber(String number) {
+        String sql = "SELECT id FROM collectivity WHERE number = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, number);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return findById(rs.getString("id"));
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding collectivity by number: " + e.getMessage(), e);
+        }
+    }
+
+    public Collectivity findByName(String name) {
+        String sql = "SELECT id FROM collectivity WHERE name = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return findById(rs.getString("id"));
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding collectivity by name: " + e.getMessage(), e);
+        }
+    }
+
+    // Vérifie si un autre collectivité (id différent) possède déjà ce numéro
+    public boolean existsByNumberAndIdNot(String number, String id) {
+        String sql = "SELECT COUNT(*) FROM collectivity WHERE number = ? AND id::text != ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, number);
+            statement.setString(2, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking uniqueness for number: " + e.getMessage(), e);
+        }
+    }
+
+    // Vérifie si un autre collectivité (id différent) possède déjà ce nom
+    public boolean existsByNameAndIdNot(String name, String id) {
+        String sql = "SELECT COUNT(*) FROM collectivity WHERE name = ? AND id::text != ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, name);
+            statement.setString(2, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking uniqueness for name: " + e.getMessage(), e);
+        }
+    }
+
+    // Méthodes existantes (simplifiées)
+    public boolean existsByNumber(String number) {
+        return findByNumber(number) != null;
+    }
+
+    public boolean existsByName(String name) {
+        return findByName(name) != null;
+    }
+
+    public Collectivity updateNumberAndName(String id, String number, String name) {
+        String sql = "UPDATE collectivity SET number = ?, name = ? WHERE id = ?::uuid";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, number);
+            statement.setString(2, name);
+            statement.setString(3, id);
+            int updated = statement.executeUpdate();
+            if (updated == 0) {
+                throw new RuntimeException("Collectivity not found for update: " + id);
+            }
+            return findById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating number and name: " + e.getMessage(), e);
+        }
+    }
+
+    public Collectivity save(Collectivity collectivity) {
+        return updateNumberAndName(collectivity.getId(), collectivity.getNumber(), collectivity.getName());
     }
 
     private List<Member> findMembersByCollectivityId(String collectivityId) {

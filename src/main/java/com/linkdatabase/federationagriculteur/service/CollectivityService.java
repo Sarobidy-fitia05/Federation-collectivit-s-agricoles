@@ -1,5 +1,6 @@
 package com.linkdatabase.federationagriculteur.service;
 
+import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 import com.linkdatabase.federationagriculteur.entity.*;
 import com.linkdatabase.federationagriculteur.repository.CollectivityRepository;
 import com.linkdatabase.federationagriculteur.repository.MemberRepository;
@@ -80,5 +81,30 @@ public class CollectivityService {
                     .toList();
             throw new RuntimeException("Some members not found: " + missing);
         }
+    }
+
+    public Collectivity attributeNumberAndName(String id, String number, String name) {
+        Collectivity collectivity = collectivityRepository.findById(id);
+        if (collectivity == null) {
+            throw new RuntimeException("Collectivity not found with id: " + id);
+        }
+
+        if (collectivity.getNumber() != null && !collectivity.getNumber().equals(number)) {
+            throw new RuntimeException("Number cannot be changed once attributed");
+        }
+        if (collectivity.getName() != null && !collectivity.getName().equals(name)) {
+            throw new RuntimeException("Name cannot be changed once attributed");
+        }
+
+        if (collectivityRepository.existsByName(name)) {
+            throw new RuntimeException("Name already exists");
+        }
+        if (collectivityRepository.existsByNumber(number)) {
+            throw new RuntimeException("Number already exists");
+        }
+
+        collectivity.setNumber(number);
+        collectivity.setName(name);
+        return collectivityRepository.save(collectivity);
     }
 }
