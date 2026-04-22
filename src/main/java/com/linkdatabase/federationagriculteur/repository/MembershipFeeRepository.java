@@ -1,5 +1,7 @@
 package com.linkdatabase.federationagriculteur.repository;
 
+import com.linkdatabase.federationagriculteur.entity.ActivityStatus;
+import com.linkdatabase.federationagriculteur.entity.Frequency;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 
 import javax.sql.DataSource;
@@ -7,6 +9,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MembershipFeeRepository {
     private DataSource dataSource;
@@ -101,5 +104,43 @@ import java.sql.Date;
         } catch (SQLException e) {
             throw new RuntimeException("Error inserting membership fee", e);
         }
+    }
+
+    public Optional<MembershipFee> findById(String id) throws SQLException {
+        String sql = "SELECT * FROM membership_fee WHERE id = ?::uuid";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setObject(1, UUID.fromString(id));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    MembershipFee fee = new MembershipFee();
+                    fee.setId(rs.getString("id"));
+                    fee.setEligibleFrom(rs.getDate("eligible_from").toLocalDate());
+                    fee.setFrequency(Frequency.valueOf(rs.getString("frequency")));
+                    fee.setAmount(rs.getBigDecimal("amount"));
+                    fee.setLabel(rs.getString("label"));
+                    fee.setStatus(ActivityStatus.valueOf(rs.getString("status")));
+                    return Optional.of(fee);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public boolean existsByCollectivityIdAndLabel(String collectivityId, String label) throws SQLException {
+        String sql = "SELECT id, collectivity_id, label  FROM membership_fee WHERE collectivity_id = ?::uuid AND label = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setObject(1, UUID.fromString(collectivityId));
+            ps.setString(2, label);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.next();
+                }
+            }
+        }
+        return false;
     }
 }
