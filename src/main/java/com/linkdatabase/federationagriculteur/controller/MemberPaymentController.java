@@ -39,6 +39,7 @@ public class MemberPaymentController {
         } catch (ConflictException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (RuntimeException e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
         }
     }
