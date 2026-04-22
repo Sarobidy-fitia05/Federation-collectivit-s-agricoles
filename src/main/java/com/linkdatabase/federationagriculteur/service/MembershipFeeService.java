@@ -6,11 +6,13 @@ import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 import com.linkdatabase.federationagriculteur.repository.CollectivityRepository;
 import com.linkdatabase.federationagriculteur.repository.MembershipFeeRepository;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class MembershipFeeService {
 
     private final MembershipFeeRepository membershipFeeRepository;
@@ -41,6 +43,9 @@ public class MembershipFeeService {
         List<MembershipFee> createdFees = new ArrayList<>();
 
         for (CreateMembershipFee request : requests) {
+             if (request.getId() == null || request.getId().isBlank()) {
+                throw new IllegalArgumentException("Membership fee id is required");
+            }
             validateCreateRequest(request);
 
             if (membershipFeeRepository.existsByCollectivityIdAndLabel(
@@ -48,11 +53,12 @@ public class MembershipFeeService {
                     request.getLabel())) {
                 throw new RuntimeException(
                         "A membership fee with label '" + request.getLabel()
-                                + "' already exists for this collectivity"
+                        + "' already exists for this collectivity"
                 );
             }
 
             MembershipFee fee = new MembershipFee();
+            fee.setId(request.getId());
             fee.setEligibleFrom(request.getEligibleFrom());
             fee.setFrequency(request.getFrequency());
             fee.setAmount(request.getAmount());
@@ -68,7 +74,7 @@ public class MembershipFeeService {
 
     private void validateCreateRequest(CreateMembershipFee request) {
         if (request.getAmount() == null ||
-                request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be strictly positive");
         }
         if (request.getEligibleFrom() == null) {
