@@ -1,6 +1,6 @@
 package com.linkdatabase.federationagriculteur.controller;
 
-import com.linkdatabase.federationagriculteur.entity.CreateMemberRequest;
+import com.linkdatabase.federationagriculteur.dto.CreateMemberRequest;
 import com.linkdatabase.federationagriculteur.entity.Member;
 import com.linkdatabase.federationagriculteur.service.MemberService;
 import org.springframework.http.HttpStatus;
