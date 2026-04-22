@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CollectivityRepository {
@@ -233,4 +234,4 @@ public class CollectivityRepository {
             throw new RuntimeException("Error finding collectivity structure: " + e.getMessage(), e);
         }
     }
-}
+ }
