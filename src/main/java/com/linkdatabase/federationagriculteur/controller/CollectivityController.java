@@ -1,5 +1,6 @@
 package com.linkdatabase.federationagriculteur.controller;
 
+import com.linkdatabase.federationagriculteur.dto.CreateMembershipFee;
 import com.linkdatabase.federationagriculteur.dto.NumberAndNameRequest;
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
@@ -44,4 +45,13 @@ public class CollectivityController {
         return ResponseEntity.ok(fees);
     }
 
+    @PostMapping()
+    public ResponseEntity<List<MembershipFee>> createMembershipFees(@PathVariable String id, @RequestBody List<CreateMembershipFee> requests)
+    {
+        @PathVariable String id,
+        @RequestBody List<CreateMembershipFee> requests) {
+        List<MembershipFee> created = membershipFeeService.createMembershipFees(id, requests);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+    }
 }
