@@ -6,6 +6,7 @@ import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.entity.CollectivityTransaction;
+import com.linkdatabase.federationagriculteur.entity.FinancialAccount;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 
 import com.linkdatabase.federationagriculteur.exception.EntityNotFoundException;
@@ -160,4 +161,6 @@ public class CollectivityController {
             );
         }
     }
+
+
 }

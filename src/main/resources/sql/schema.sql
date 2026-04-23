@@ -51,3 +51,17 @@ CREATE TABLE collectivity_transaction (
                                               FOREIGN KEY (collectivity_id)
                                                   REFERENCES collectivity(id)
 );
+
+CREATE TABLE financial_account (
+                                   id VARCHAR(50) PRIMARY KEY,
+                                   amount NUMERIC(15,2) NOT NULL,
+                                   collectivity_id VARCHAR(50) NOT NULL,
+                                   type VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE collectivity_transaction (
+                                          id VARCHAR(50) PRIMARY KEY,
+                                          account_id VARCHAR(50) NOT NULL,
+                                          amount NUMERIC(15,2) NOT NULL,
+                                          creation_date DATE NOT NULL
+);
