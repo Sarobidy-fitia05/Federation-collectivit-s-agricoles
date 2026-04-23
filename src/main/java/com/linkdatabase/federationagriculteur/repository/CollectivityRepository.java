@@ -21,8 +21,7 @@ public class CollectivityRepository {
         this.memberRepository = memberRepository;
     }
 
-    // Insert avec ID fourni (plus d'auto-génération)
-    public Collectivity insertCollectivity(Collectivity collectivity) {
+     public Collectivity insertCollectivity(Collectivity collectivity) {
         String sql = """
                 INSERT INTO collectivity (id, location, federation_approval)
                 VALUES (?, ?, ?)
@@ -222,6 +221,27 @@ public class CollectivityRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error finding collectivity structure: " + e.getMessage(), e);
+        }
+
+
+    }
+    public boolean existsById(String id) {
+        String sql = "SELECT COUNT(id) FROM collectivity WHERE id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, id);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking collectivity existence by id: " + e.getMessage(), e);
         }
     }
 }

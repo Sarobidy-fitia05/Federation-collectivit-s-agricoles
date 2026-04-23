@@ -29,3 +29,25 @@ CREATE TABLE IF NOT EXISTS member_payment (
     FOREIGN KEY (membership_fee_id) REFERENCES membership_fee(id),
     FOREIGN KEY (financial_account_id) REFERENCES financial_account(id)
     );
+
+CREATE TABLE collectivity_transaction (
+                                          id VARCHAR(255) PRIMARY KEY,
+                                          creation_date DATE NOT NULL,
+                                          amount DECIMAL(19,2) NOT NULL,
+                                          payment_mode VARCHAR(50) NOT NULL,
+                                          account_credited_id VARCHAR(255) NOT NULL,
+                                          member_debited_id VARCHAR(255) NOT NULL,
+                                          collectivity_id VARCHAR(255) NOT NULL,
+
+                                          CONSTRAINT fk_account_credited
+                                              FOREIGN KEY (account_credited_id)
+                                                  REFERENCES financial_account(id),
+
+                                          CONSTRAINT fk_member_debited
+                                              FOREIGN KEY (member_debited_id)
+                                                  REFERENCES member(id),
+
+                                          CONSTRAINT fk_collectivity
+                                              FOREIGN KEY (collectivity_id)
+                                                  REFERENCES collectivity(id)
+);

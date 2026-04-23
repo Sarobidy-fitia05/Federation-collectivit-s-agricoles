@@ -1,7 +1,7 @@
 package com.linkdatabase.federationagriculteur.controller;
 
 import com.linkdatabase.federationagriculteur.dto.CreateMemberRequest;
-import com.linkdatabase.federationagriculteur.entity.Member;
+ import com.linkdatabase.federationagriculteur.entity.Member;
 import com.linkdatabase.federationagriculteur.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +24,6 @@ public class MemberController {
         List<Member> members = memberService.createMembers(requests);
         return new ResponseEntity<>(members, HttpStatus.CREATED);
     }
+
+
 }
