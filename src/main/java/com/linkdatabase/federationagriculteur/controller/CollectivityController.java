@@ -6,6 +6,7 @@ import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 
 import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.entity.CollectivityTransaction;
+import com.linkdatabase.federationagriculteur.entity.FinancialAccount;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 
 import com.linkdatabase.federationagriculteur.exception.EntityNotFoundException;
@@ -160,18 +161,18 @@ public class CollectivityController {
             );
         }
     }
-    @GetMapping("/{id}")
+  @GetMapping("/{id}")
     public ResponseEntity<Collectivity> getCollectivity(@PathVariable String id) {
         try { Collectivity collectivity = collectivityService.getCollectivityById(id);
             return ResponseEntity.ok(collectivity);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace(); // 🔥 très important
-            throw new ResponseStatusException(
+             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e.getMessage()
             );
         }
     }
+
 }
