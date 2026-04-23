@@ -1,5 +1,5 @@
 package com.linkdatabase.federationagriculteur.entity;
 
 public enum PaymentMode {
-     CASH, MOBILE_BANKING ,BANK_TRANSFER
+     CASH, MOBILE_BANKING,BANK_TRANSFER,MOBILE_MONEY
 }
