@@ -52,9 +52,7 @@ public class CollectivityController {
         return new ResponseEntity<>(collectivities, HttpStatus.CREATED);
     }
 
-    // =========================
-    // UPDATE INFOS
-    // =========================
+
     @PutMapping("/{id}/informations")
     public ResponseEntity<Collectivity> updateCollectivityInformation(
             @PathVariable String id,
@@ -67,26 +65,13 @@ public class CollectivityController {
     }
 
     @GetMapping("/{id}/membershipFees")
-    public ResponseEntity<List<MembershipFee>> getMembershipFees(
-            @PathVariable String id) {
-
+    public ResponseEntity<List<MembershipFee>> getMembershipFees(@PathVariable String id) {
         try {
-            List<MembershipFee> fees =
-                    membershipFeeService.getMembershipFees(id);
-
+            List<MembershipFee> fees = membershipFeeService.getMembershipFees(id);
             return ResponseEntity.ok(fees);
-
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    e.getMessage()
-            );
-
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Unexpected error"
-            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
     }
 
