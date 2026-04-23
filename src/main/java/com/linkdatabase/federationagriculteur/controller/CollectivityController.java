@@ -161,6 +161,18 @@ public class CollectivityController {
             );
         }
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<Collectivity> getCollectivity(@PathVariable String id) {
+        try { Collectivity collectivity = collectivityService.getCollectivityById(id);
+            return ResponseEntity.ok(collectivity);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
+    }
 
 }
