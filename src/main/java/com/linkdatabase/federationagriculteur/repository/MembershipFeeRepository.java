@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Repository
 public class MembershipFeeRepository {
+
     private final DataSource dataSource;
 
     public MembershipFeeRepository(DataSource dataSource) {
@@ -22,8 +23,9 @@ public class MembershipFeeRepository {
 
     public List<MembershipFee> findByCollectivityId(String collectivityId) {
         List<MembershipFee> fees = new ArrayList<>();
+
         String sql = """
-                SELECT id, eligible_from, frequency, amount, label, status
+                SELECT id, collectivity_id, eligible_from, frequency, amount, label, status
                 FROM membership_fee
                 WHERE collectivity_id = ?
                 ORDER BY eligible_from
@@ -39,18 +41,21 @@ public class MembershipFeeRepository {
                     fees.add(mapRowToMembershipFee(rs));
                 }
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Error finding membership fees by collectivity", e);
         }
+
         return fees;
     }
 
     public MembershipFee insert(MembershipFee fee, String collectivityId) {
+
         String sql = """
                 INSERT INTO membership_fee
                 (id, collectivity_id, eligible_from, frequency, amount, label, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-                RETURNING id, eligible_from, frequency, amount, label, status
+                RETURNING id, collectivity_id, eligible_from, frequency, amount, label, status
                 """;
 
         try (Connection conn = dataSource.getConnection();
@@ -71,12 +76,14 @@ public class MembershipFeeRepository {
                     throw new RuntimeException("Insert failed, no data returned.");
                 }
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Error inserting membership fee", e);
         }
     }
 
     public Optional<Collectivity> findCollectivityById(String id) {
+
         String sql = "SELECT id, name FROM collectivity WHERE id = ?";
 
         try (Connection conn = dataSource.getConnection();
@@ -101,6 +108,7 @@ public class MembershipFeeRepository {
     }
 
     public boolean existsByCollectivityIdAndLabel(String collectivityId, String label) {
+
         String sql = "SELECT 1 FROM membership_fee WHERE collectivity_id = ? AND label = ?";
 
         try (Connection conn = dataSource.getConnection();
@@ -112,12 +120,14 @@ public class MembershipFeeRepository {
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next();
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Error checking membership fee existence", e);
         }
     }
 
     private MembershipFee mapRowToMembershipFee(ResultSet rs) throws SQLException {
+
         MembershipFee fee = new MembershipFee();
 
         fee.setId(rs.getString("id"));
