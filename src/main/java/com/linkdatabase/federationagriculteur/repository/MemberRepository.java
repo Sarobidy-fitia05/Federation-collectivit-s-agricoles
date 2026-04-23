@@ -158,4 +158,18 @@ public class MemberRepository {
 
         return member;
     }
+
+     public int count() {
+        String sql = "SELECT COUNT(id) FROM member";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error counting members: " + e.getMessage(), e);
+        }
+    }
 }
