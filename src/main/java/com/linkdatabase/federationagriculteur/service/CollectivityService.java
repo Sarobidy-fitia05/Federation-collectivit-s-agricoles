@@ -4,6 +4,7 @@ import com.linkdatabase.federationagriculteur.dto.CreateCollectivityRequest;
 import com.linkdatabase.federationagriculteur.dto.NumberAndNameRequest;
 import com.linkdatabase.federationagriculteur.entity.*;
 import com.linkdatabase.federationagriculteur.exception.ConflictException;
+import com.linkdatabase.federationagriculteur.exception.EntityNotFoundException;
 import com.linkdatabase.federationagriculteur.repository.CollectivityRepository;
 import com.linkdatabase.federationagriculteur.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -124,5 +125,12 @@ public class CollectivityService {
                     .toList();
             throw new RuntimeException("Some members not found: " + missing);
         }
+    }
+    public Collectivity getCollectivityById(String id) {
+        Collectivity collectivity = collectivityRepository.findById(id);
+        if (collectivity == null) {
+            throw new EntityNotFoundException("Collectivity not found with id: " + id);
+        }
+        return collectivity;
     }
 }
