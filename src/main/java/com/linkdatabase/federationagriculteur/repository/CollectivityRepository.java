@@ -21,31 +21,21 @@ public class CollectivityRepository {
         this.memberRepository = memberRepository;
     }
 
-    public Collectivity insertCollectivity(Collectivity collectivity) {
+     public Collectivity insertCollectivity(Collectivity collectivity) {
         String sql = """
-                INSERT INTO collectivity (location, federation_approval)
-                VALUES (?, ?)
+                INSERT INTO collectivity (id, location, federation_approval)
+                VALUES (?, ?, ?)
                 """;
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, collectivity.getLocation());
-            statement.setBoolean(2, true);
+            statement.setString(1, collectivity.getId());
+            statement.setString(2, collectivity.getLocation());
+            statement.setBoolean(3, true);
 
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("Collectivity insertion failed, no rows affected.");
-            }
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    collectivity.setId(generatedKeys.getString(1));
-                    return collectivity;
-                } else {
-                    throw new RuntimeException("Collectivity insertion failed, no ID generated.");
-                }
-            }
+            statement.executeUpdate();
+            return collectivity;
 
         } catch (SQLException e) {
             throw new RuntimeException("Error inserting collectivity: " + e.getMessage(), e);
@@ -53,7 +43,7 @@ public class CollectivityRepository {
     }
 
     public void insertCollectivityMembers(String collectivityId, List<String> memberIds) {
-        String sql = "INSERT INTO collectivity_member (collectivity_id, member_id) VALUES (?::uuid, ?::uuid)";
+        String sql = "INSERT INTO collectivity_member (collectivity_id, member_id) VALUES (?, ?)";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -75,7 +65,7 @@ public class CollectivityRepository {
         String sql = """
                 INSERT INTO collectivity_structure
                     (collectivity_id, president_id, vice_president_id, treasurer_id, secretary_id)
-                VALUES (?::uuid, ?::uuid, ?::uuid, ?::uuid, ?::uuid)
+                VALUES (?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = dataSource.getConnection();
@@ -97,7 +87,7 @@ public class CollectivityRepository {
         String sql = """
                 SELECT id, location, number, name
                 FROM collectivity
-                WHERE id = ?::uuid
+                WHERE id = ?
                 """;
 
         try (Connection connection = dataSource.getConnection();
@@ -152,7 +142,7 @@ public class CollectivityRepository {
         String sql = """
                 UPDATE collectivity
                 SET number = ?, name = ?
-                WHERE id = ?::uuid
+                WHERE id = ?
                 """;
 
         try (Connection connection = dataSource.getConnection();
@@ -186,7 +176,7 @@ public class CollectivityRepository {
     }
 
     private List<Member> findMembersByCollectivityId(String collectivityId) {
-        String sql = "SELECT member_id FROM collectivity_member WHERE collectivity_id = ?::uuid";
+        String sql = "SELECT member_id FROM collectivity_member WHERE collectivity_id = ?";
         List<String> memberIds = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
@@ -210,7 +200,7 @@ public class CollectivityRepository {
         String sql = """
                 SELECT president_id, vice_president_id, treasurer_id, secretary_id
                 FROM collectivity_structure
-                WHERE collectivity_id = ?::uuid
+                WHERE collectivity_id = ?
                 """;
 
         try (Connection connection = dataSource.getConnection();
@@ -231,6 +221,27 @@ public class CollectivityRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error finding collectivity structure: " + e.getMessage(), e);
+        }
+
+
+    }
+    public boolean existsById(String id) {
+        String sql = "SELECT COUNT(id) FROM collectivity WHERE id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, id);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking collectivity existence by id: " + e.getMessage(), e);
         }
     }
 }

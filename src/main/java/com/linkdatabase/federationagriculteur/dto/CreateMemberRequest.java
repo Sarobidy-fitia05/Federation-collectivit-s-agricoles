@@ -9,9 +9,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class CreateMemberRequest extends MemberInformation {
-
+    private String id;
     private String collectivityIdentifier;
     private List<String> referees;
     private Boolean registrationFeePaid;
     private Boolean membershipDuesPaid;
+
 }

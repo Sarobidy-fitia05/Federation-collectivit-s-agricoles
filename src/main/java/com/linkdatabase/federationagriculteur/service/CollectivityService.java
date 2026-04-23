@@ -27,10 +27,14 @@ public class CollectivityService {
         List<Collectivity> created = new ArrayList<>();
 
         for (CreateCollectivityRequest request : requests) {
+            if (request.getId() == null || request.getId().isBlank()) {
+                throw new IllegalArgumentException("Collectivity id is required");
+            }
             validateBusinessRules(request);
             validateAllMembersExist(request);
 
             Collectivity collectivity = new Collectivity();
+            collectivity.setId(request.getId());
             collectivity.setLocation(request.getLocation());
 
             Collectivity saved = collectivityRepository.insertCollectivity(collectivity);
@@ -49,6 +53,7 @@ public class CollectivityService {
 
         return created;
     }
+
 
     public Collectivity assignNumberAndName(String collectivityId, NumberAndNameRequest request) {
         validateNumberAndNameRequest(request);
