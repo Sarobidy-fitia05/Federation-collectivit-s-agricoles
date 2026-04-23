@@ -6,13 +6,15 @@ import com.linkdatabase.federationagriculteur.entity.Collectivity;
 import com.linkdatabase.federationagriculteur.entity.MembershipFee;
 import com.linkdatabase.federationagriculteur.repository.CollectivityRepository;
 import com.linkdatabase.federationagriculteur.repository.MembershipFeeRepository;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Service
 public class MembershipFeeService {
-
     private final MembershipFeeRepository membershipFeeRepository;
     private final CollectivityRepository collectivityRepository;
 
@@ -32,7 +34,6 @@ public class MembershipFeeService {
 
     public List<MembershipFee> createMembershipFees(String collectivityId,
                                                     List<CreateMembershipFee> requests) {
-
         Collectivity collectivity = collectivityRepository.findById(collectivityId);
         if (collectivity == null) {
             throw new RuntimeException("Collectivity not found with id: " + collectivityId);
@@ -53,9 +54,10 @@ public class MembershipFeeService {
             }
 
             MembershipFee fee = new MembershipFee();
+            fee.setId(UUID.randomUUID().toString());
             fee.setEligibleFrom(request.getEligibleFrom());
             fee.setFrequency(request.getFrequency());
-            fee.setAmount(request.getAmount());
+            fee.setAmount(request.getAmount());  // ✅ Maintenant BigDecimal
             fee.setLabel(request.getLabel());
             fee.setStatus(ActivityStatus.ACTIVE);
 
@@ -67,6 +69,7 @@ public class MembershipFeeService {
     }
 
     private void validateCreateRequest(CreateMembershipFee request) {
+        // ✅ Validation correcte pour BigDecimal
         if (request.getAmount() == null ||
                 request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be strictly positive");

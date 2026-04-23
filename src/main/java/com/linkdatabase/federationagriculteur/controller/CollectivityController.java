@@ -19,10 +19,14 @@ import java.util.List;
 @RequestMapping("/collectivities")
 public class CollectivityController {
 
-    private  CollectivityService collectivityService;
-    private  MembershipFeeService membershipFeeService;
-    public CollectivityController(CollectivityService collectivityService) {
+    private final CollectivityService collectivityService;
+    private final MembershipFeeService membershipFeeService;
+
+    // ✅ CORRIGÉ : Injecter les DEUX services
+    public CollectivityController(CollectivityService collectivityService,
+                                  MembershipFeeService membershipFeeService) {
         this.collectivityService = collectivityService;
+        this.membershipFeeService = membershipFeeService;
     }
 
     @PostMapping
@@ -57,7 +61,7 @@ public class CollectivityController {
             List<MembershipFee> created = membershipFeeService.createMembershipFees(id, requests);
             return new ResponseEntity<>(created, HttpStatus.CREATED);
         } catch (RuntimeException e) {
-             String msg = e.getMessage().toLowerCase();
+            String msg = e.getMessage().toLowerCase();
             if (msg.contains("not found")) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             } else if (msg.contains("already exists") || msg.contains("required") || msg.contains("must be")) {

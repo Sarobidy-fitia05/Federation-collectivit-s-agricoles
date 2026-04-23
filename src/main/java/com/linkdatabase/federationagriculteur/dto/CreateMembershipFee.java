@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public class CreateMembershipFee {
     private LocalDate eligibleFrom;
     private Frequency frequency;
+    private String name;
     private BigDecimal amount;
     private String label;
 }

@@ -16,4 +16,4 @@ public class MembershipFee {
     private String label;
     private ActivityStatus status;
     private String collectivityId;
- }
+}
