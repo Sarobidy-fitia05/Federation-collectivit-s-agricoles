@@ -13,9 +13,9 @@ public class DataSource {
     @Bean
     public Connection getConnection() {
         try {
-            String jdbcURl = "jdbc:postgresql://localhost:5432/agricultural_federation_api";
+            String jdbcURl = "jdbc:postgresql://localhost:5432/federation";
             String user = "postgres";
-            String password = "postgres";
+            String password = "sarobidy";
             return DriverManager.getConnection(jdbcURl, user, password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
