@@ -1,6 +1,7 @@
 package edu.hei.school.agricultural.service;
 
 import edu.hei.school.agricultural.controller.dto.CreateCollectivityActivity;
+import edu.hei.school.agricultural.controller.mapper.CollectivityActivityDtoMapper;
 import edu.hei.school.agricultural.entity.*;
 import edu.hei.school.agricultural.exception.BadRequestException;
 import edu.hei.school.agricultural.exception.NotFoundException;
@@ -8,8 +9,7 @@ import edu.hei.school.agricultural.repository.CollectivityActivityRepository;
 import edu.hei.school.agricultural.repository.CollectivityRepository;
 import edu.hei.school.agricultural.repository.FinancialAccountRepository;
 import edu.hei.school.agricultural.repository.MembershipFeeRepository;
-import edu.hei.school.agricultural.controller.mapper.CollectivityActivityDtoMapper;
-import lombok.RequiredArgsConstructor;
+ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

@@ -1,19 +1,13 @@
 package edu.hei.school.agricultural.controller;
 
-import edu.hei.school.agricultural.controller.dto.CollectivityInformation;
-import edu.hei.school.agricultural.controller.dto.CreateCollectivity;
-import edu.hei.school.agricultural.controller.dto.CreateMembershipFee;
-import edu.hei.school.agricultural.controller.mapper.CollectivityDtoMapper;
-import edu.hei.school.agricultural.controller.mapper.FinancialAccountDtoMapper;
-import edu.hei.school.agricultural.controller.mapper.MembershipFeeDtoMapper;
-import edu.hei.school.agricultural.controller.mapper.TransactionDtoMapper;
+import edu.hei.school.agricultural.controller.dto.*;
+import edu.hei.school.agricultural.controller.mapper.*;
 import edu.hei.school.agricultural.entity.Collectivity;
 import edu.hei.school.agricultural.entity.MembershipFee;
 import edu.hei.school.agricultural.exception.BadRequestException;
 import edu.hei.school.agricultural.exception.NotFoundException;
 import edu.hei.school.agricultural.service.CollectivityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,22 +24,20 @@ public class CollectivityController {
     private final CollectivityService collectivityService;
     private final FinancialAccountDtoMapper financialAccountDtoMapper;
     private final TransactionDtoMapper transactionDtoMapper;
+    private final CollectivityActivityDtoMapper collectivityActivityDtoMapper; // Ajouté pour les activités
 
     @GetMapping("/collectivities/{id}")
     public ResponseEntity<?> getCollectivityById(@PathVariable String id) {
         try {
-            return ResponseEntity.status(OK).body(collectivityDtoMapper.mapToDto(collectivityService.getCollectivityById(id)));
+            return ResponseEntity.status(OK)
+                    .body(collectivityDtoMapper.mapToDto(collectivityService.getCollectivityById(id)));
         } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
     }
 
     @PostMapping("/collectivities")
@@ -58,17 +50,12 @@ public class CollectivityController {
                     .body(collectivityService.createCollectivities(collectivities).stream()
                             .map(collectivityDtoMapper::mapToDto)
                             .toList());
-        } catch (
-                BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
-        } catch (
-                NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -81,14 +68,11 @@ public class CollectivityController {
             return ResponseEntity.status(OK)
                     .body(collectivityDtoMapper.mapToDto(collectivityService.updateInformations(id, name, number)));
         } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -100,14 +84,11 @@ public class CollectivityController {
                             .map(membershipFeeDtoMapper::mapToDto)
                             .toList());
         } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -124,14 +105,11 @@ public class CollectivityController {
                             .map(membershipFeeDtoMapper::mapToDto)
                             .toList());
         } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -144,33 +122,64 @@ public class CollectivityController {
                             .map(financialAccount -> financialAccountDtoMapper.mapToDto(financialAccount, at))
                             .toList());
         } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @GetMapping("/collectivities/{id}/transactions")
-    public ResponseEntity<?> getCollectivityTransactions(@PathVariable String id, @RequestParam LocalDate from, @RequestParam LocalDate to) {
+    public ResponseEntity<?> getCollectivityTransactions(@PathVariable String id,
+                                                         @RequestParam LocalDate from,
+                                                         @RequestParam LocalDate to) {
         try {
             return ResponseEntity.status(OK)
                     .body(collectivityService.getTransactionsByCollectivity(id, from, to).stream()
                             .map(transactionDtoMapper::mapToDto)
                             .toList());
         } catch (BadRequestException e) {
-            return ResponseEntity.status(BAD_REQUEST)
-                    .body(e.getMessage());
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         } catch (NotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    // ========== Nouveaux endpoints pour les activités ==========
+
+    @GetMapping("/collectivities/{id}/activities")
+    public ResponseEntity<?> getActivities(@PathVariable String id) {
+        try {
+            var activities = collectivityService.getActivities(id)
+                    .stream()
+                    .map(collectivityActivityDtoMapper::mapToDto)
+                    .toList();
+            return ResponseEntity.ok(activities);
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/collectivities/{id}/activities")
+    public ResponseEntity<?> addActivities(@PathVariable String id,
+                                           @RequestBody List<CreateCollectivityActivity> body) {
+        try {
+            var created = collectivityService.addActivities(id, body)
+                    .stream()
+                    .map(collectivityActivityDtoMapper::mapToDto)
+                    .toList();
+            return ResponseEntity.ok(created);
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

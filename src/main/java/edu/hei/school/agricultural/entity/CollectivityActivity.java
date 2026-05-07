@@ -1,7 +1,5 @@
 package edu.hei.school.agricultural.entity;
 
-import edu.hei.school.agricultural.controller.dto.ActivityType;
-import edu.hei.school.agricultural.controller.dto.MonthlyRecurrenceRule;
 import lombok.*;
 
 import java.time.LocalDate;

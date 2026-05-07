@@ -21,7 +21,7 @@ public class CollectivityActivityMapper {
     private final CollectivityRepository collectivityRepository;
 
     public CollectivityActivity mapFromResultSet(ResultSet rs) throws SQLException {
-        // Chargement de la collectivité propriétaire
+        // Chargement de la collectivité à laquelle est rattachée l'activité
         var collectivity = collectivityRepository.findById(rs.getString("collectivity_id")).orElse(null);
 
         // Récupération des occupations concernées (tableau PostgreSQL)

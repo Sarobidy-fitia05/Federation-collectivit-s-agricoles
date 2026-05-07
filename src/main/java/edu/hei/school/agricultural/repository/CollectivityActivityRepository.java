@@ -13,15 +13,14 @@ import java.util.UUID;
 @Repository
 public class CollectivityActivityRepository {
 
-    private final DataSourceConfig dataSourceConfig;
+    private final DataSource dataSource;
     private final CollectivityActivityMapper mapper;
 
-    public CollectivityActivityRepository(DataSourceConfig dataSourceConfig, CollectivityActivityMapper mapper) {
-        this.dataSourceConfig = dataSourceConfig;
+    public CollectivityActivityRepository(DataSource dataSource, CollectivityActivityMapper mapper) {
+        this.dataSource = dataSource;
         this.mapper = mapper;
     }
 
-    // Sauvegarde par lot et retourne toutes les activités de la collectivité
     public List<CollectivityActivity> saveAll(String collectivityId, List<CollectivityActivity> activities) {
         String sql = """
                 insert into collectivity_activity (id, collectivity_id, label, activity_type,
@@ -31,7 +30,7 @@ public class CollectivityActivityRepository {
                                               activity_type = excluded.activity_type
                 """;
 
-        try (Connection conn = dataSourceConfig.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             for (CollectivityActivity activity : activities) {
                 ps.setString(1, UUID.randomUUID().toString());
@@ -43,10 +42,14 @@ public class CollectivityActivityRepository {
                     ps.setDate(5, Date.valueOf(activity.getExecutiveDate()));
                     ps.setNull(6, Types.INTEGER);
                     ps.setNull(7, Types.VARCHAR);
-                } else {
+                } else if (activity.getRecurrenceRule() != null) {
                     ps.setNull(5, Types.DATE);
                     ps.setInt(6, activity.getRecurrenceRule().getWeekOrdinal());
                     ps.setString(7, activity.getRecurrenceRule().getDayOfWeek());
+                } else {
+                    ps.setNull(5, Types.DATE);
+                    ps.setNull(6, Types.INTEGER);
+                    ps.setNull(7, Types.VARCHAR);
                 }
 
                 String[] occupations = activity.getMemberOccupationConcerned()
@@ -57,7 +60,6 @@ public class CollectivityActivityRepository {
                 ps.addBatch();
             }
             ps.executeBatch();
-            // Retourne la liste à jour
             return findAllByCollectivityId(collectivityId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,7 +75,7 @@ public class CollectivityActivityRepository {
                 where collectivity_id = ?
                 """;
 
-        try (Connection conn = dataSourceConfig.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, collectivityId);
             ResultSet rs = ps.executeQuery();
