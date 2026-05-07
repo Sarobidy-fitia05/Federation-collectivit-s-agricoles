@@ -7,7 +7,7 @@ public enum Bank {
     BOA,
     BGFI,
     AFG,
-    ACCES_BAQUE,
+    ACCES_BANQUE,
     BAOBAB,
     SIPEM
 }

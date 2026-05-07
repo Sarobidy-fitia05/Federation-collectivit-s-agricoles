@@ -1,11 +1,14 @@
 package edu.hei.school.agricultural.service;
 
+import edu.hei.school.agricultural.controller.dto.CreateCollectivityActivity;
 import edu.hei.school.agricultural.entity.*;
 import edu.hei.school.agricultural.exception.BadRequestException;
 import edu.hei.school.agricultural.exception.NotFoundException;
+import edu.hei.school.agricultural.repository.CollectivityActivityRepository;
 import edu.hei.school.agricultural.repository.CollectivityRepository;
 import edu.hei.school.agricultural.repository.FinancialAccountRepository;
 import edu.hei.school.agricultural.repository.MembershipFeeRepository;
+import edu.hei.school.agricultural.controller.mapper.CollectivityActivityDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,8 @@ public class CollectivityService {
     private final CollectivityRepository collectivityRepository;
     private final MembershipFeeRepository membershipFeeRepository;
     private final FinancialAccountRepository financialAccountRepository;
+    private final CollectivityActivityRepository collectivityActivityRepository;
+    private final CollectivityActivityDtoMapper collectivityActivityDtoMapper;
 
     public List<Collectivity> createCollectivities(List<Collectivity> collectivities) {
         for (Collectivity collectivity : collectivities) {
@@ -49,7 +54,7 @@ public class CollectivityService {
         }
         collectivity.setName(actualName);
         collectivity.setNumber(actualNumber);
-        return collectivityRepository.saveAll(List.of((collectivity))).getFirst();
+        return collectivityRepository.saveAll(List.of(collectivity)).get(0);
     }
 
     public List<MembershipFee> getMembershipFeesByCollectivityIdentifier(String collectivityIdentifier) {
@@ -128,5 +133,35 @@ public class CollectivityService {
                     throw new IllegalArgumentException("Unknown financial account type " + financialAccount.getClass().getTypeName());
         };
         return paymentMode;
+    }
+
+    // ========== NOUVELLES MÉTHODES POUR LES ACTIVITÉS ==========
+
+    public List<CollectivityActivity> addActivities(String collectivityId,
+                                                    List<CreateCollectivityActivity> dtoList) {
+        Collectivity collectivity = collectivityRepository.findById(collectivityId)
+                .orElseThrow(() -> new NotFoundException("Collectivity.id=" + collectivityId + " not found"));
+
+        List<CollectivityActivity> entities = dtoList.stream()
+                .map(dto -> {
+                    if (dto.getExecutiveDate() != null && dto.getRecurrenceRule() != null) {
+                        throw new BadRequestException("Cannot set both executiveDate and recurrenceRule");
+                    }
+                    if (dto.getExecutiveDate() == null && dto.getRecurrenceRule() == null) {
+                        throw new BadRequestException("Must set either executiveDate or recurrenceRule");
+                    }
+                    CollectivityActivity activity = collectivityActivityDtoMapper.mapToEntity(dto);
+                    activity.setCollectivity(collectivity);
+                    return activity;
+                })
+                .toList();
+
+        return collectivityActivityRepository.saveAll(collectivityId, entities);
+    }
+
+    public List<CollectivityActivity> getActivities(String collectivityId) {
+        collectivityRepository.findById(collectivityId)
+                .orElseThrow(() -> new NotFoundException("Collectivity.id=" + collectivityId + " not found"));
+        return collectivityActivityRepository.findAllByCollectivityId(collectivityId);
     }
 }
