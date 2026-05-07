@@ -19,6 +19,9 @@ public class StatisticsRepository {
         this.dataSourceConfig = dataSourceConfig;
     }
 
+    // =========================
+    // 1. Montants gagnés par membre sur une période
+    // =========================
     public List<Map<String, Object>> getEarnedAmountByMember(
             String collectivityId,
             LocalDate from,
@@ -50,7 +53,6 @@ public class StatisticsRepository {
             ps.setString(3, collectivityId);
 
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
                 row.put("id", rs.getString("id"));
@@ -98,7 +100,6 @@ public class StatisticsRepository {
             ps.setString(2, collectivityId);
 
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
                 row.put("id", rs.getString("id"));
@@ -143,7 +144,6 @@ public class StatisticsRepository {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
                 row.put("collectivity_id", rs.getString("collectivity_id"));
@@ -163,8 +163,6 @@ public class StatisticsRepository {
             LocalDate to
     ) throws SQLException {
 
-        // La table member n'a pas de colonne created_at, on utilise collectivity_member
-        // (si la colonne joined_at n'existe pas, il faudra l'ajouter)
         String sql = """
             SELECT
                 cm.collectivity_id,
@@ -183,11 +181,104 @@ public class StatisticsRepository {
             ps.setDate(2, Date.valueOf(to));
 
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 Map<String, Object> row = new HashMap<>();
                 row.put("collectivity_id", rs.getString("collectivity_id"));
                 row.put("new_members", rs.getInt("new_members"));
+                result.add(row);
+            }
+        }
+
+        return result;
+    }
+
+    // =========================
+    // 5. Taux d'assiduité par membre pour une collectivité (local)
+    // =========================
+    public List<Map<String, Object>> getMemberAssiduityByCollectivity(
+            String collectivityId,
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
+
+        String sql = """
+            SELECT
+                m.id,
+                COUNT(CASE WHEN ama.attendance_status = 'ATTENDED' THEN 1 END) * 100.0
+                    / NULLIF(
+                        COUNT(CASE WHEN ama.attendance_status IN ('ATTENDED', 'MISSING') THEN 1 END),
+                        0
+                    ) AS assiduity_percentage
+            FROM member m
+            JOIN collectivity_member cm
+                ON cm.member_id = m.id
+                AND cm.collectivity_id = ?
+            LEFT JOIN collectivity_activity ca
+                ON  ca.collectivity_id = cm.collectivity_id
+                AND ca.executive_date BETWEEN ? AND ?
+            LEFT JOIN activity_member_attendance ama
+                ON  ama.activity_id = ca.id
+                AND ama.member_id   = m.id
+            GROUP BY m.id
+        """;
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        try (Connection conn = dataSourceConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, collectivityId);
+            ps.setDate(2, Date.valueOf(from));
+            ps.setDate(3, Date.valueOf(to));
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("id", rs.getString("id"));
+                row.put("assiduity_percentage", rs.getDouble("assiduity_percentage"));
+                result.add(row);
+            }
+        }
+
+        return result;
+    }
+
+    // =========================
+    // 6. Taux d'assiduité global par collectivité (overall)
+    // =========================
+    public List<Map<String, Object>> getOverallAssiduityByCollectivity(
+            LocalDate from,
+            LocalDate to
+    ) throws SQLException {
+
+        String sql = """
+            SELECT
+                ca.collectivity_id,
+                COUNT(CASE WHEN ama.attendance_status = 'ATTENDED' THEN 1 END) * 100.0
+                    / NULLIF(
+                        COUNT(CASE WHEN ama.attendance_status IN ('ATTENDED', 'MISSING') THEN 1 END),
+                        0
+                    ) AS assiduity_percentage
+            FROM collectivity_activity ca
+            LEFT JOIN activity_member_attendance ama
+                ON ama.activity_id = ca.id
+            WHERE ca.executive_date BETWEEN ? AND ?
+            GROUP BY ca.collectivity_id
+        """;
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        try (Connection conn = dataSourceConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDate(1, Date.valueOf(from));
+            ps.setDate(2, Date.valueOf(to));
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("collectivity_id", rs.getString("collectivity_id"));
+                row.put("assiduity_percentage", rs.getDouble("assiduity_percentage"));
                 result.add(row);
             }
         }

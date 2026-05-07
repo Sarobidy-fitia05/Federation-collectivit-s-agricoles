@@ -11,7 +11,8 @@ public class CollectivityStatisticsMapper {
             String firstName,
             String lastName,
             double earnedAmount,
-            double unpaidAmount
+            double unpaidAmount,
+            double assiduityPercentage   // NEW
     ) {
         CollectivityLocalStatistics dto = new CollectivityLocalStatistics();
 
@@ -20,6 +21,7 @@ public class CollectivityStatisticsMapper {
         dto.setLastName(lastName);
         dto.setEarnedAmount(earnedAmount);
         dto.setUnpaidAmount(unpaidAmount);
+        dto.setAssiduityPercentage(assiduityPercentage); // NEW
 
         return dto;
     }
@@ -27,10 +29,10 @@ public class CollectivityStatisticsMapper {
     public CollectivityOverallStatistics toGlobalStats(
             String collectivityId,
             double percentage,
-            int newMembers
+            int newMembers,
+            double overallMemberAssiduityPercentage   // NEW
     ) {
-        CollectivityOverallStatistics dto =
-                new CollectivityOverallStatistics();
+        CollectivityOverallStatistics dto = new CollectivityOverallStatistics();
 
         CollectivityInformation info = new CollectivityInformation();
         info.setName("Collectivity " + collectivityId);
@@ -39,6 +41,7 @@ public class CollectivityStatisticsMapper {
         dto.setCollectivityInformation(info);
         dto.setOverallMemberCurrentDuePercentage(percentage);
         dto.setNewMembersNumber(newMembers);
+        dto.setOverallMemberAssiduityPercentage(overallMemberAssiduityPercentage); // NEW
 
         return dto;
     }
