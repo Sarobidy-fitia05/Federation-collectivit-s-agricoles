@@ -13,6 +13,7 @@ public class CollectivityLocalStatistics {
     private String memberId;
     private String firstName;
     private String lastName;
-    private double earnedAmount;      // encaissement
-    private double unpaidAmount;      // impayé potentiel
+    private double earnedAmount;
+    private double unpaidAmount;
+    private double assiduityPercentage; // NEW
 }
